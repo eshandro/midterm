@@ -7,14 +7,25 @@
 /* Book */
 .book {
 	display: inline-block;
-	width: 40px;
-	height: 160px;
+/*	width: 40px;
+	height: 160px;*/
 	border-width: 5px;
 	border-top-style: ridge;
 	border-left-style: ridge;
 	border-right-style: ridge;
 	border-bottom-style: ridge;
 	border-color: red;
+}
+
+.vertical-book {
+	width: 160px;
+	height: 40px;
+
+}
+
+.horizontal-book {
+	width: 40px;
+	height: 160px;
 }
 
 

@@ -28,7 +28,14 @@ Book.prototype.createElem = function() {
 		default:
 			color = 'black';
 	}
+	if (randomColor === 1 || randomColor === 3){
+		$(this.elem).addClass('horizontal-book');
+	}
+	else {
+		$(this.elem).addClass('vertical-book');
+	}
 	$(this.elem).css('border-color', color);
+	
 	return this.elem;
 }
 var Stack = function () {
@@ -138,6 +145,10 @@ $(document).on('ready', function() {
 			}, 1500, function () {
 			$('.add-book-form').addClass('display-none');
 			$('.add-button').removeClass('is-hidden');			
+			// Clear out entered form info
+			$('#new-book-title').val('');
+			$('#new-author').val('');
+			$('input[name=book-status]:checked', '.add-book-form').prop('checked', false);
 			});
 		}
 
@@ -148,12 +159,12 @@ $(document).on('ready', function() {
 			bedsideStack['bookList'].push(newBook);
 			idLocation = $('#bedside-stack');
 		}
-		if(testStatus === 'reading') {
+		if(testStatus === 'current-read') {
 			currentStack['bookList'].push(newBook);
 			idLocation = $('#current-stack');
 		}
 		if(testStatus === 'recent-read') {
-			RecentReadStack['bookList'].push(newBook);
+			recentStack['bookList'].push(newBook);
 			idLocation = $('#recent-stack');
 		}
 
