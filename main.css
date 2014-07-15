@@ -1,14 +1,19 @@
+.my-container {
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+.my-inner {
+	padding: 10px;
+}
 
 
 
 
-
-
-/* Book */
+/* Books */
 .book {
 	display: inline-block;
-/*	width: 40px;
-	height: 160px;*/
+	padding: 4px;
 	border-width: 5px;
 	border-top-style: ridge;
 	border-left-style: ridge;
@@ -17,15 +22,37 @@
 	border-color: red;
 }
 
-.vertical-book {
-	width: 160px;
+.horizontal-book {
+	width: 150px;
 	height: 40px;
+	vertical-align: middle;
+	position: absolute;
+	bottom: 0;
+	left:30px;
 
 }
 
-.horizontal-book {
+.vertical-book {
 	width: 40px;
-	height: 160px;
+	height: 150px;
+	position: absolute;
+	bottom: 0;
+	left: 35px;
+}
+
+.vertical-text {
+	-webkit-transform: rotate(90deg);
+	-moz-transform: rotate(90deg);
+	-ms-transform: rotate(90deg);
+	-o-transform: rotate(90deg);
+	transform: rotate(90deg);
+	-webkit-transform-origin: bottom left;
+	-mox-transform-origin: bottom left;
+	-0-transform-origin: bottom left;
+	transform-origin: bottom left;
+	display: block;
+	white-space: nowrap;
+
 }
 
 
@@ -123,7 +150,14 @@
 /* Comments/reviews section */
 .thoughts {
 	background-image: url('images/8.jpg');
-	width: 300px;
-	height: 300px;
+	width: 500px;
+	height: 600px;
+}
 
-}	
+
+/* Set properties for book holder divs */
+#bedside-stack, #current-stack, #recent-stack {
+	position: relative;
+	height: 160px;
+
+}

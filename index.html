@@ -17,20 +17,20 @@
 
 </head>
 <body>
-  <div class="container">
+  <div class="container my-container">
   
   <div class="row">
-  	<div class="col-md-4">
-  		<div class="shelf read"></div>
+  	<div class="col-md-5">
+      <div class="shelf read">
+
+      </div>
   		<div class="shelf-edge"></div>
 
   	</div>
 
-  	<div class="col-md-4">
 
-  	</div>
 
-  	<div class="col-md-4">
+  	<div class="col-md-5 col-md-offset-2">
   		<div class="shelf current"></div>
   		<div class="shelf-edge"></div>
   	</div>
@@ -38,20 +38,20 @@
   </div>  	
   </div>
 
-  <div class="container">
+  <div class="container my-container">
   <div class="row">
 
-   	<div class="col-md-8">
+   	<div class="col-md-6">
    		<div class="thoughts">
    			Some comments go here
    		</div>
   	</div>
 
-  	<div class="col-md-4">
+  	<div class="col-md-4 col-md-offset-1">
 		<button class="button add-button">Add a Book</button>
 		
 
-		<form class="form-horizontal add-book-form display-none" role="form">
+		<form class="form-horizontal add-book-form is-hidden" role="form">
 		  <div class="form-group">
 		    
 		    <label for="book-title" class="control-label">Title</label>
@@ -67,7 +67,7 @@
 		  <div class="form-group">			
 			<div class="radio">
 			  <label>
-			    <input type="radio" name="book-status" id="book-status-1" value="to-read">
+			    <input type="radio" name="book-status" id="book-status-1" value="to-read" required>
 			    Add a book to your to read stack
 			  </label>
 			</div>
@@ -89,12 +89,23 @@
 			<button class="button cancel">Cancel</button>
 			</div>
 		</form>  		
-  	</div>
+  	
+      <div class="shelf bedside">       
+      </div>
+      <div class="shelf-edge">
+      </div>
+      <div class="table-legs">
+          <div class="drawer">&mdash;
+          </div>
+      </div>
+
+
+    </div>
   
   </div>
   </div>
 
-  <div class="container">
+  <!-- <div class="container my-container">
   <div class="row">
   
   	<div class="col-md-4">
@@ -102,9 +113,6 @@
   		</div>
   	</div>
 
-  	<div class="col-md-4">
-
-  	</div>
 
   	<div class="col-md-4">
   		<div class="shelf bedside">  			
@@ -118,7 +126,7 @@
   	</div>
   
   </div>
-  </div>  
+  </div>  --> 
 
   <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
   <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>  
