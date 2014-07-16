@@ -6,6 +6,8 @@ var Book = function (title, author, status) {
 	this.author = author;
 	this.status = status;
 	this.orientation = '';
+	// Pushes new books into allBooks array
+	allBooks.push(this);	
 }
 Book.prototype.createElem = function() {
 	this.elem = $('<span class="book">');
@@ -26,19 +28,43 @@ Book.prototype.createElem = function() {
 		default:
 			color = 'black';
 	}
-	if (randomColor === 1 || randomColor === 3){
-		$(this.elem).addClass('horizontal-book');
-		this.orientation = 'horizontal';
-	}
-	else {
-		$(this.elem).addClass('vertical-book');
-		this.orientation = 'vertical'
-	}
 	$(this.elem).css('border-color', color);
-
 	return this.elem;
 }
+Book.prototype.getStack = function() {
+		// Add a book to correct Stack and returns the Stack
+		var testStatus = this.status;
 
+		if(testStatus === 'to-read') {
+			bedsideStack.addBook(this);
+			var stackBeingUsed = bedsideStack;
+		}
+		if(testStatus === 'current-read') {
+			currentStack.addBook(this);
+			var stackBeingUsed = currentStack;
+		}
+		if(testStatus === 'recent-read') {
+			recentStack.addBook(this);
+			var stackBeingUsed = recentStack;
+		}		
+		return stackBeingUsed;
+	}
+
+Book.prototype.getID = function() {
+		// get ID for placing book element on page
+		var testStatus = this.status;
+		var idLocation = '';
+		if(testStatus === 'to-read') {
+			idLocation = $('#bedside-stack');
+		}
+		if(testStatus === 'current-read') {
+			idLocation = $('#current-stack');
+		}
+		if(testStatus === 'recent-read') {
+			idLocation = $('#recent-stack');
+		}		
+		return idLocation;
+	}
 
 var Stack = function () {
 	this.bookList = [];
@@ -65,10 +91,10 @@ var Stack = function () {
 		var left = 0;
 		var firstBookOrientation = this.bookList[0].orientation;
 		if (firstBookOrientation === 'horizontal') {
-			left = 182;
+			left = 125;
 		}
 		else { 
-			left = 77;
+			left = 95;
 		}
 
 		// Figure bottom amount
@@ -82,26 +108,23 @@ var Stack = function () {
 				}
 			}
 		}
-		console.log(bottom);
 		positions.push(bottom);
+		
 		// Figure left amount
-		for (var i=1; i <this.bookList.length-1; i++) {
+		for (var i=0; i <this.bookList.length-1; i++) {
 			if (this.bookList[i].orientation === 'horizontal' 
 				&& book.orientation !== 'horizontal') {
 				left += 152;
-					if(this.bookList[i] === 'horizontal' && this.bookList[i-1] === 'horizontal') {
-						left -= 152;
-					}
 			}
 			if (this.bookList[i].orientation === 'vertical') {
 				left += 42;
 			}
 		}
-		console.log(left)
 		positions.push(left);
 		return positions;
 	}	
 }
+
 
 
 var BedsideStack = function() {
@@ -143,6 +166,17 @@ var RecentReadStack = function() {
 RecentReadStack.prototype = new Stack();
 RecentReadStack.prototype.constructor = RecentReadStack;
 
+// Makes an element draggable
+var addDraggable = function(item) {
+	$(item).draggable({ revert: 'invalid',
+						cursor: 'move',
+						 });
+};
+
+var addDroppable = function(item){
+	$(item).droppable({ hoverClass: "drop-hover" });
+}
+
 // Creates and adds Stack, BedsideStack, RecentReadStack, CurrentReadingStack
 var stack = new Stack();
 
@@ -156,7 +190,13 @@ var recentStack = new RecentReadStack();
 recentStack.displayElem(recentStack.createElem());
 
 
+
 $(document).on('ready', function() {
+
+	// Makes Stack areas droppable
+	addDroppable('#bedside-stack');
+	addDroppable('#current-stack');
+	addDroppable('#recent-stack');
 
 	$('.add-button').on('click', function() {
 		// Opens up the form animated from the right
@@ -175,19 +215,18 @@ $(document).on('ready', function() {
 	$(document).on('click', '.shelf-it', function() {
 
 			
-		// Creates new Book and adds it to allBooks array
+		// Creates new Book from form info
 		var newTitle = $('#new-book-title').val();
 		var newAuthor = $('#new-author').val();
 		var newBookStatus = $('input[name=book-status]:checked', '.add-book-form').val();
 		if(newTitle && newBookStatus) {
 			var newBook = new Book(newTitle, newAuthor, newBookStatus);
-			allBooks.push(newBook);
 
 			// Closes form animated to the right and shows add button
 			$('.add-book-form').animate( {
 				left: 134 + '%',
 				opacity: 0
-			}, 1500, function () {
+			}, 1000, function () {
 			$('.add-book-form').addClass('is-hidden');
 			$('.add-button').removeClass('is-hidden');			
 			// Clear out entered form info
@@ -197,33 +236,28 @@ $(document).on('ready', function() {
 			});
 		}
 
-		// Add newBook to correct Stack
-		var testStatus = newBook.status;
-		var idLocation = '';
+		// Get correct Stack and ID
+		var stackBeingUsed = newBook.getStack();
 
-		if(testStatus === 'to-read') {
-			bedsideStack.addBook(newBook);
-			idLocation = $('#bedside-stack');
-			var stackBeingUsed = bedsideStack;
-		}
-		if(testStatus === 'current-read') {
-			currentStack.addBook(newBook);
-			idLocation = $('#current-stack');
-			var stackBeingUsed = currentStack;
-		}
-		if(testStatus === 'recent-read') {
-			recentStack.addBook(newBook);
-			idLocation = $('#recent-stack');
-			var stackBeingUsed = recentStack;
-		}
+		var idLocation = newBook.getID();
 
-		// Create the newBook element & displays it to the correct stack
+		// Create the newBook element 
 		var displayBook = newBook.createElem();
-		if (stackBeingUsed.bookList.length === 5) {
-			displayBook.removeClass('horizontal-book');
+		
+		// Set vertical or horizontal orientation of book
+		if (stackBeingUsed === recentStack) {
 			displayBook.addClass('vertical-book');
+			newBook.orientation = 'vertical';
+		};
+		if (stackBeingUsed === currentStack) {
+			displayBook.addClass('vertical-book');
+			newBook.orientation = 'vertical';
 		}
-		// If statement adds vertical text if necessary
+		if (stackBeingUsed === bedsideStack) {
+			displayBook.addClass('horizontal-book');
+			newBook.orientation = 'horizontal';
+		}
+		// Changes text to vertical text if necessary
 		if ($(displayBook).attr('class') === 'book vertical-book') {
 			var titlePara = $('<p class="vertical-text">');
 			$(titlePara).text(newTitle);
@@ -234,25 +268,28 @@ $(document).on('ready', function() {
 		}
 		
 		// Find bottom and left position of this book
-		if (stackBeingUsed.bookList.length !== 1) {	
-			var positions = stackBeingUsed.getBookPosition(newBook);
-			var bottomPos = positions[0] + 'px';
-			var leftPos = positions[1] +'px';
-			$(displayBook).css({
+		var positions = stackBeingUsed.getBookPosition(newBook);
+		var bottomPos = positions[0] + 'px';
+		var leftPos = positions[1] +'px';
+		$(displayBook).css({
 				'bottom': bottomPos,
 				'left': leftPos });
-		}
+		
 		$(idLocation).append($(displayBook));
+
+		// Make new book draggable
+		addDraggable(displayBook);
+
 		 
 	});
 
-	// Closes add book form
+	// Closes and clears add book form
 	$('.cancel').on('click', function(event) {
 		event.preventDefault();
 		$('.add-book-form').animate( {
 			left: 134 + '%',
 			opacity: 0
-		}, 1500, function () {
+		}, 1000, function () {
 			$('.add-book-form').addClass('is-hidden');
 			$('.add-button').removeClass('is-hidden');			
 			// Clear out entered form info
@@ -262,4 +299,16 @@ $(document).on('ready', function() {
 		});
 	});
   
+	$(document).on('drag', '#bedside-stack > .book', function() {
+		$(this).css('transform', 'rotate(90deg)');
+	})
+
+	$(document).on('drop', '#bedside-stack', function(e, ui) {
+		console.log(e);
+		// console.log(draggable);
+		$(this).append(ui.draggable);
+		$(ui.draggable).css({'bottom': 0,
+							'top': '' });
+	})
+
 });

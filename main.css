@@ -158,6 +158,12 @@
 /* Set properties for book holder divs */
 #bedside-stack, #current-stack, #recent-stack {
 	position: relative;
-	height: 160px;
+	height: 175px;
+}
 
+/* Adds some styling to items while being dragged */
+.ui-draggable-dragging {
+	-webkit-box-shadow: 4px 7px 5px 0px rgba(50, 50, 50, 0.75);
+	-moz-box-shadow:    4px 7px 5px 0px rgba(50, 50, 50, 0.75);
+	box-shadow:         4px 7px 5px 0px rgba(50, 50, 50, 0.75);
 }
