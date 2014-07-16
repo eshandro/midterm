@@ -7,9 +7,12 @@ var Book = function (title, author, status) {
 	this.status = status;
 	this.orientation = '';
 	this.color = '';
+	this.id = Book.counter++;
 	// Pushes new books into allBooks array
 	allBooks.push(this);	
 }
+Book.counter = 0;
+
 Book.prototype.createElem = function() {
 	this.elem = $('<span class="book">');
 	var randomColor = _.random(1,4);
@@ -31,28 +34,29 @@ Book.prototype.createElem = function() {
 	}
 	$(this.elem).css('border-color', color);
 	this.color = color;
+	$(this.elem).attr('data-id', this.id);
 	return this.elem;
 }
+// Finds the Stack
 Book.prototype.getStack = function() {
-		// Add a book to correct Stack and returns the Stack
 		var testStatus = this.status;
 
 		if(testStatus === 'to-read') {
-			bedsideStack.addBook(this);
 			var stackBeingUsed = bedsideStack;
 		}
 		if(testStatus === 'current-read') {
-			currentStack.addBook(this);
 			var stackBeingUsed = currentStack;
 		}
 		if(testStatus === 'recent-read') {
-			recentStack.addBook(this);
 			var stackBeingUsed = recentStack;
 		}		
 		return stackBeingUsed;
 	}
-
-Book.prototype.getID = function() {
+// Add to Stack
+Book.prototype.addToStack = function(stack) {
+	stack.addBook(this);
+}
+Book.prototype.getHTMLID = function() {
 		// get ID for placing book element on page
 		var testStatus = this.status;
 		var idLocation = '';
@@ -87,7 +91,11 @@ var Stack = function () {
 		};
 	};
 
-	this.getBookPosition = function(book) {
+	this.findBookbyDataID = function(data-id,stack) {
+		
+	}
+
+	this.setBookPosition = function(book) {
 		var positions = [];
 		var bottom = 0;
 		var left = 0;
@@ -195,7 +203,7 @@ recentStack.displayElem(recentStack.createElem());
 
 
 $(document).on('ready', function() {
-
+	
 	// Makes Stack areas droppable
 	addDroppable('#bedside-stack');
 	addDroppable('#current-stack');
@@ -217,7 +225,7 @@ $(document).on('ready', function() {
 	})
 
 	$(document).on('click', '.shelf-it', function() {
-			
+
 		// Creates new Book from form info
 		var newTitle = $('#new-book-title').val();
 		var newAuthor = $('#new-author').val();
@@ -241,7 +249,9 @@ $(document).on('ready', function() {
 
 		// Get correct Stack and ID
 		var stackBeingUsed = newBook.getStack();
-		var idLocation = newBook.getID();
+		var idLocation = newBook.getHTMLID();
+		// Add this book to correct Stack bookList
+		newBook.addToStack(stackBeingUsed);
 
 		// Create the newBook element 
 		var displayBook = newBook.createElem();
@@ -267,7 +277,7 @@ $(document).on('ready', function() {
 		}
 		
 		// Find bottom and left position of this book
-		var positions = stackBeingUsed.getBookPosition(newBook);
+		var positions = stackBeingUsed.setBookPosition(newBook);
 		var bottomPos = positions[0] + 'px';
 		var leftPos = positions[1] +'px';
 		$(displayBook).css({
@@ -298,30 +308,32 @@ $(document).on('ready', function() {
 		});
 	});
   
-	$(document).on('dragstart', '.book', function() {
+/*	$(document).on('dragstart', '.book', function() {
 		console.log(this.title);
 
-		// $(this).css('transform', 'rotate(90deg)');
-	})
+		$(this).css('transform', 'rotate(90deg)');
+	})*/
 
 	$(document).on('drop', '#bedside-stack', function(e, ui) {
 		// Set position of dropped book
-		// console.log(ui);
-		// console.log(e);
-		// console.log(ui.draggable.parent());
-		// console.log(e.offsetX);
+		var droppedBook = $(ui.draggable);
 		var setLeft = e.offsetX + 'px';
-		$(this).append(ui.draggable);
-		$(ui.draggable).css({'bottom': 0,
+
+		$(this).append(droppedBook);
+		$(droppedBook).css({'bottom': 0,
 							'top': '',
 							'left': setLeft });
 		
 		// Add dropped book to new Stack bookList
-		this.bookList.push()
+		var droppedBookID = droppedBook.attr('data-id');
+		console.log(droppedBookID);
+		// this.bookList.push()
 	})
 
 
-	$(document).on('mouseup', '#bedside-stack', function(event) {
+/*	$(document).on('mouseup', '#bedside-stack', function(event) {
 		console.log(event.offsetX);
-	})
+	})*/
+
+	
 });
