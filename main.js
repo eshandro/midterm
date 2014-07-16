@@ -1,5 +1,13 @@
 var allBooks = [];
+findBookByDataID = function(dataID) {
+	for(var i=0; i<allBooks.length; i++) {
+		if(allBooks[i].id === dataID) {
+			return allBooks[i];
+		}
+	}
+};
 
+// ------------------------------- Books --------------------------- 
 
 var Book = function (title, author, status) {
 	this.title = title;
@@ -37,8 +45,8 @@ Book.prototype.createElem = function() {
 	$(this.elem).attr('data-id', this.id);
 	return this.elem;
 }
-// Finds the Stack
-Book.prototype.getStack = function() {
+// Finds the Stack from Book status
+Book.prototype.getStackFromStatus = function() {
 		var testStatus = this.status;
 
 		if(testStatus === 'to-read') {
@@ -52,10 +60,20 @@ Book.prototype.getStack = function() {
 		}		
 		return stackBeingUsed;
 	}
-// Add to Stack
-Book.prototype.addToStack = function(stack) {
-	stack.addBook(this);
+// Set Book status from Stack
+Book.prototype.getStatusFromStack = function(stack) {
+	if(stack === bedsideStack) {
+		var newStatus = 'to-read';
+	}
+	if(stack === currentStack) {
+		var newStatus = 'current-read';
+	}
+	if(stack === recentStack) {
+		var newStatus = 'recent-read';
+	}
+	return newStatus;
 }
+
 Book.prototype.getHTMLID = function() {
 		// get ID for placing book element on page
 		var testStatus = this.status;
@@ -72,6 +90,8 @@ Book.prototype.getHTMLID = function() {
 		return idLocation;
 	}
 
+// ------------------------------- Stacks --------------------------- 
+
 var Stack = function () {
 	this.bookList = [];
 	
@@ -83,17 +103,14 @@ var Stack = function () {
 		this.bookList.splice(index,1);
 	};
 	
-	this.findIndexOfBook = function(title) {
+	this.findIndexOfBookInStack = function(id) {
 		for(var i=0; i<this.bookList.length; i++) {
-			if(this.bookList[i].title === title) {
+			if(this.bookList[i].id === id) {
 				return i;
 			};
 		};
 	};
 
-	this.findBookbyDataID = function(data-id,stack) {
-		
-	}
 
 	this.setBookPosition = function(book) {
 		var positions = [];
@@ -176,6 +193,20 @@ var RecentReadStack = function() {
 RecentReadStack.prototype = new Stack();
 RecentReadStack.prototype.constructor = RecentReadStack;
 
+// Gets new Stack from DOM element for drop events
+var getStackFromID = function(ID) {
+	if(ID === 'bedside-stack') {
+		var newStack = bedsideStack;
+	}
+	if(ID === 'recent-stack') {
+		var newStack = recentStack;
+	}
+	if(ID === 'current-stack') {
+		var newStack = currentStack;
+	}
+	return newStack;
+}
+// ------------------------------- Drag and Drop --------------------------- 
 // Makes an element draggable
 var addDraggable = function(item) {
 	$(item).draggable({ revert: 'invalid',
@@ -226,6 +257,7 @@ $(document).on('ready', function() {
 
 	$(document).on('click', '.shelf-it', function() {
 
+// ----------------------- Create a new Book and to DOM and Stacks --------------
 		// Creates new Book from form info
 		var newTitle = $('#new-book-title').val();
 		var newAuthor = $('#new-author').val();
@@ -248,10 +280,11 @@ $(document).on('ready', function() {
 		}
 
 		// Get correct Stack and ID
-		var stackBeingUsed = newBook.getStack();
+		var stackBeingUsed = newBook.getStackFromStatus();
 		var idLocation = newBook.getHTMLID();
+
 		// Add this book to correct Stack bookList
-		newBook.addToStack(stackBeingUsed);
+		stackBeingUsed.addBook(newBook);
 
 		// Create the newBook element 
 		var displayBook = newBook.createElem();
@@ -291,7 +324,7 @@ $(document).on('ready', function() {
 
 		 
 	});
-
+// ---------------------------------------------------------------------------------
 	// Closes and clears add book form
 	$('.cancel').on('click', function(event) {
 		event.preventDefault();
@@ -314,20 +347,28 @@ $(document).on('ready', function() {
 		$(this).css('transform', 'rotate(90deg)');
 	})*/
 
-	$(document).on('drop', '#bedside-stack', function(e, ui) {
+	$(document).on('drop', '.ui-droppable', function(e, ui) {
 		// Set position of dropped book
-		var droppedBook = $(ui.draggable);
+		var droppedBookElem = $(ui.draggable);
 		var setLeft = e.offsetX + 'px';
 
-		$(this).append(droppedBook);
-		$(droppedBook).css({'bottom': 0,
+		$(this).append(droppedBookElem);
+		$(droppedBookElem).css({'bottom': 0,
 							'top': '',
 							'left': setLeft });
 		
-		// Add dropped book to new Stack bookList
-		var droppedBookID = droppedBook.attr('data-id');
-		console.log(droppedBookID);
-		// this.bookList.push()
+		// Remove from old Stack and add dropped book to new Stack bookList
+		var droppedBookID = +droppedBookElem.attr('data-id');
+		var droppedBook = findBookByDataID(droppedBookID);
+		var oldStack = droppedBook.getStackFromStatus();
+		oldStack.deleteBook(oldStack.findIndexOfBookInStack(droppedBookID));
+
+		var newStackID = $(this).attr('id');
+		var newStack = getStackFromID(newStackID);
+		droppedBook.orientation = newStack.bookOrientation;
+		droppedBook.status = droppedBook.getStatusFromStack(newStack);
+		newStack.addBook(droppedBook);
+
 	})
 
 
