@@ -19,25 +19,47 @@ var sortAllBooksByStatus = function(list) {
 			allBooks[i].sortNumber = 3;
 		}
 	}
-	console.log(allBooks);
 	var sortedList = _.sortBy(list, function(item) {
 		return item.sortNumber;
 	});
 	allBooks = sortedList;
-	console.log(allBooks);
-}
+};
 
-var createBooksTableElem = function(list) {
+var createBooksTableElem = function() {
 	var currentUser = userNameList[userNameList.length-1];
-	console.log(currentUser);
+
 	var panel = $('<div class="panel panel-default">');
 	var panelHeading = $('<div class="panel-heading">');
 	var panelTitle = $('<h3 class="panel-title">' + currentUser + '\'s Library</h3>');
 	var panelBody = $('<div class="panel-body">');
+	var panelBodyText = '<p>Here are all the books in your library.</p>'
 	var tableBooks = $('<table class="table table-striped">');
+	var tableHeader = $('<tr><th>#</th><th>Title</th><th>Author</th></tr>');
+
+	panel.append(panelHeading);
+	panelHeading.append(panelTitle);
+	panel.append(panelBody);
+	panelBody.append(panelBodyText);
+	panel.append(tableBooks);
+	tableBooks.append(tableHeader);
 
 
+	sortAllBooksByStatus(allBooks);
+	var counter = 1;
+	for(var i=0; i < allBooks.length; i++) {
+		var tableRow = $('<tr>');
 
+		tableRow.append($('<td>' + counter + '</td>'));
+
+		tableRow.append($('<td>' + allBooks[i].title + '</td>'));
+		tableRow.append($('<td>' + allBooks[i].author + '</td>'));
+
+		tableBooks.append(tableRow);
+
+		counter++;
+	}
+
+	return panel;
 }
 
 // ------------------------------- Books --------------------------- 
