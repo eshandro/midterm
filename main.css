@@ -140,10 +140,8 @@
 }
 
 /* Library */
-.library {
-	width: 300px;
-	height: 250px;
-	border: 3px solid black;
+.library-button {
+	margin-right: 50px;
 	}
 
 /* Comments/reviews section */
@@ -165,4 +163,45 @@
 	-webkit-box-shadow: 4px 7px 5px 0px rgba(50, 50, 50, 0.75);
 	-moz-box-shadow:    4px 7px 5px 0px rgba(50, 50, 50, 0.75);
 	box-shadow:         4px 7px 5px 0px rgba(50, 50, 50, 0.75);
+}
+
+/* Popup styling */
+.popup-quote {
+	position: relative;
+}
+.popup-back {
+	height: 100%;
+	left: 0;
+	position: fixed;
+	top: 0;
+	width: 100%;
+	z-index: 100;
+	background-color: rgba(64,64,64,.7);	
+}
+
+.popup-cont {
+	position: fixed;
+	z-index: 102;
+	width: 40%;
+	font-size: 14px;
+	background: #ECECEA;
+	padding: 25px;
+	box-shadow: 0 3px 10px #222;
+	border-radius: 10px;
+	top: 30%;
+	left: 30%;	
+}
+
+.popup-close {
+	position: absolute;
+	top: 0;
+	right: 5px;
+	font-style: 18px;
+	color: #74AFAD;
+	cursor: pointer;
+	padding: 5px;
+}
+
+.popup-close:hover {
+	color: #D9853B;
 }

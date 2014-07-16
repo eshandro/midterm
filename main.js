@@ -7,6 +7,39 @@ findBookByDataID = function(dataID) {
 	}
 };
 
+var sortAllBooksByStatus = function(list) {
+	for(var i=0; i<allBooks.length; i++) {
+		if(allBooks[i].status === 'current-read') {
+			allBooks[i].sortNumber = 1;
+		}
+		if(allBooks[i].status === 'to-read') {
+			allBooks[i].sortNumber = 2;
+		}
+		if(allBooks[i].status === 'recent-read') {
+			allBooks[i].sortNumber = 3;
+		}
+	}
+	console.log(allBooks);
+	var sortedList = _.sortBy(list, function(item) {
+		return item.sortNumber;
+	});
+	allBooks = sortedList;
+	console.log(allBooks);
+}
+
+var createBooksTableElem = function(list) {
+	var currentUser = userNameList[userNameList.length-1];
+	console.log(currentUser);
+	var panel = $('<div class="panel panel-default">');
+	var panelHeading = $('<div class="panel-heading">');
+	var panelTitle = $('<h3 class="panel-title">' + currentUser + '\'s Library</h3>');
+	var panelBody = $('<div class="panel-body">');
+	var tableBooks = $('<table class="table table-striped">');
+
+
+
+}
+
 // ------------------------------- Books --------------------------- 
 
 var Book = function (title, author, status) {
@@ -231,7 +264,8 @@ currentStack.displayElem(currentStack.createElem());
 var recentStack = new RecentReadStack();
 recentStack.displayElem(recentStack.createElem());
 
-
+// User name storage
+var userNameList = [];
 
 $(document).on('ready', function() {
 	
@@ -379,6 +413,7 @@ $(document).on('ready', function() {
 			$('#user-name').attr('placeholder', badLogIn);
 		}
 		else {
+			userNameList.push(userName);
 			$('#user-name').removeClass('form-control');
 			$('#user-name').addClass('is-none');
 			$('#user-password').removeClass('form-control');
@@ -406,7 +441,14 @@ $(document).on('ready', function() {
 		$(this).removeClass('log-out-button');
 		$(this).addClass('sign-in-button');
 		$(this).text("Sign in");
+		userNameList.pop();
 	})
+// ---------------------- Library popup --------------------------------------
 
+	// Remove pop-up on click
+	$(document).on('click', '.popup-close', function() {
+		$('.popup-cont').remove();
+		$('.popup-back').remove();
+	})
 	
 });
