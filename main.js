@@ -244,6 +244,7 @@ $(document).on('ready', function() {
 		// Opens up the form animated from the right
 		$(this).addClass('is-hidden');
 		$('.add-book-form').removeClass('is-hidden');
+		$('.add-book-form').css('left', 134 + '%');
 		$('.add-book-form').animate( {
 			left: 0,
 			opacity: 1
@@ -255,9 +256,9 @@ $(document).on('ready', function() {
 		event.preventDefault();
 	})
 
+// ----------------------- Create a new Book and to DOM and Stacks --------------
 	$(document).on('click', '.shelf-it', function() {
 
-// ----------------------- Create a new Book and to DOM and Stacks --------------
 		// Creates new Book from form info
 		var newTitle = $('#new-book-title').val();
 		var newAuthor = $('#new-author').val();
@@ -271,7 +272,8 @@ $(document).on('ready', function() {
 				opacity: 0
 			}, 1000, function () {
 			$('.add-book-form').addClass('is-hidden');
-			$('.add-button').removeClass('is-hidden');			
+			$('.add-button').removeClass('is-hidden');
+			$('.add-book-form').css('left', 0);			
 			// Reset form
 			$('#new-book-title').val('');
 			$('#new-author').val('');
@@ -333,20 +335,16 @@ $(document).on('ready', function() {
 			opacity: 0
 		}, 1000, function () {
 			$('.add-book-form').addClass('is-hidden');
-			$('.add-button').removeClass('is-hidden');			
+			$('.add-button').removeClass('is-hidden');
+			$('.add-book-form').css('left', 0);				
 			// Clear out entered form info
 			$('#new-book-title').val('');
 			$('#new-author').val('');
 			$('input[name=book-status]:checked', '.add-book-form').prop('checked', false);
 		});
 	});
-  
-/*	$(document).on('dragstart', '.book', function() {
-		console.log(this.title);
 
-		$(this).css('transform', 'rotate(90deg)');
-	})*/
-
+// --------------------- Drop event ------------------------------------
 	$(document).on('drop', '.ui-droppable', function(e, ui) {
 		// Set position of dropped book
 		var droppedBookElem = $(ui.draggable);
@@ -371,10 +369,44 @@ $(document).on('ready', function() {
 
 	})
 
+// ---------------------- Sign in and Log out events ----------------------------------
 
-/*	$(document).on('mouseup', '#bedside-stack', function(event) {
-		console.log(event.offsetX);
-	})*/
+	$(document).on('click', '.sign-in-button', function(event) {
+		event.preventDefault;
+		var userName = $('#user-name').val();
+		if (!userName) {
+			var badLogIn = 'Invalid User Name';
+			$('#user-name').attr('placeholder', badLogIn);
+		}
+		else {
+			$('#user-name').removeClass('form-control');
+			$('#user-name').addClass('is-none');
+			$('#user-password').removeClass('form-control');
+			$('#user-password').addClass('is-none');
+			$('.sign-in-form').prepend(
+				'<p class="navbar-text welcome")>Welcome back, ' + userName + '!</p>');
+
+			$(this).removeClass('sign-in-button');
+			$(this).addClass('log-out-button');
+			$(this).text("Log out");
+
+			$('#user-name').val('');
+			$('#user-password').val('');
+		}
+	})
+
+	$(document).on('click', '.log-out-button', function(event) {
+		event.preventDefault;
+		$('.welcome').remove();
+		$('#user-name').addClass('form-control');
+		$('#user-name').removeClass('is-none');
+		$('#user-password').addClass('form-control');
+		$('#user-password').removeClass('is-none');		
+
+		$(this).removeClass('log-out-button');
+		$(this).addClass('sign-in-button');
+		$(this).text("Sign in");
+	})
 
 	
 });

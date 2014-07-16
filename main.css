@@ -88,7 +88,6 @@
 
 .add-book-form {
 	position: relative;
-	left: 134%;
 	opacity: 0;
 }
 
@@ -96,7 +95,7 @@
 	visibility: hidden;
 }
 
-.display-none {
+.is-none {
 	display: none;
 }
 
