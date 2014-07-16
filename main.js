@@ -6,6 +6,7 @@ var Book = function (title, author, status) {
 	this.author = author;
 	this.status = status;
 	this.orientation = '';
+	this.color = '';
 	// Pushes new books into allBooks array
 	allBooks.push(this);	
 }
@@ -29,6 +30,7 @@ Book.prototype.createElem = function() {
 			color = 'black';
 	}
 	$(this.elem).css('border-color', color);
+	this.color = color;
 	return this.elem;
 }
 Book.prototype.getStack = function() {
@@ -125,10 +127,8 @@ var Stack = function () {
 	}	
 }
 
-
-
 var BedsideStack = function() {
-	this.bedsideStackList = [];
+	this.bookOrientation = 'horizontal';
 	this.createElem = function() {
 		this.elem = $('<div id="bedside-stack">');
 		return this.elem;
@@ -142,6 +142,7 @@ BedsideStack.prototype.constructor = BedsideStack;
 
 
 var CurrentReadingStack = function() {
+	this.bookOrientation = 'vertical';
 	this.createElem = function() {
 		this.elem = $('<div id="current-stack">');
 		return this.elem;
@@ -155,6 +156,7 @@ CurrentReadingStack.prototype.constructor = CurrentReadingStack;
 
 
 var RecentReadStack = function() {
+	this.bookOrientation = 'vertical'
 	this.createElem = function() {
 		this.elem = $('<div id="recent-stack">');
 		return this.elem;
@@ -170,6 +172,7 @@ RecentReadStack.prototype.constructor = RecentReadStack;
 var addDraggable = function(item) {
 	$(item).draggable({ revert: 'invalid',
 						cursor: 'move',
+						contain: 'window',
 						 });
 };
 
@@ -208,12 +211,12 @@ $(document).on('ready', function() {
 		}, 1500 );
 	});
 
+	// Stops form from submitting and refreshing page on book add
 	$('.add-book-form').on('submit', function(event) {
 		event.preventDefault();
 	})
 
 	$(document).on('click', '.shelf-it', function() {
-
 			
 		// Creates new Book from form info
 		var newTitle = $('#new-book-title').val();
@@ -229,7 +232,7 @@ $(document).on('ready', function() {
 			}, 1000, function () {
 			$('.add-book-form').addClass('is-hidden');
 			$('.add-button').removeClass('is-hidden');			
-			// Clear out entered form info
+			// Reset form
 			$('#new-book-title').val('');
 			$('#new-author').val('');
 			$('input[name=book-status]:checked', '.add-book-form').prop('checked', false);
@@ -238,25 +241,21 @@ $(document).on('ready', function() {
 
 		// Get correct Stack and ID
 		var stackBeingUsed = newBook.getStack();
-
 		var idLocation = newBook.getID();
 
 		// Create the newBook element 
 		var displayBook = newBook.createElem();
 		
 		// Set vertical or horizontal orientation of book
-		if (stackBeingUsed === recentStack) {
+		if (stackBeingUsed.bookOrientation === 'vertical') {
 			displayBook.addClass('vertical-book');
 			newBook.orientation = 'vertical';
 		};
-		if (stackBeingUsed === currentStack) {
-			displayBook.addClass('vertical-book');
-			newBook.orientation = 'vertical';
-		}
-		if (stackBeingUsed === bedsideStack) {
+		
+		if (stackBeingUsed.bookOrientation === 'horizontal') {
 			displayBook.addClass('horizontal-book');
 			newBook.orientation = 'horizontal';
-		}
+		};
 		// Changes text to vertical text if necessary
 		if ($(displayBook).attr('class') === 'book vertical-book') {
 			var titlePara = $('<p class="vertical-text">');
@@ -299,20 +298,29 @@ $(document).on('ready', function() {
 		});
 	});
   
-	$(document).on('drag', '#bedside-stack > .book', function() {
-		$(this).css('transform', 'rotate(90deg)');
+	$(document).on('dragstart', '.book', function() {
+		console.log(this.title);
+
+		// $(this).css('transform', 'rotate(90deg)');
 	})
 
 	$(document).on('drop', '#bedside-stack', function(e, ui) {
-		console.log(ui.position);
-		console.log(ui.draggable);
-		console.log(e.offsetX);
+		// Set position of dropped book
+		// console.log(ui);
+		// console.log(e);
+		// console.log(ui.draggable.parent());
+		// console.log(e.offsetX);
 		var setLeft = e.offsetX + 'px';
 		$(this).append(ui.draggable);
 		$(ui.draggable).css({'bottom': 0,
 							'top': '',
 							'left': setLeft });
+		
+		// Add dropped book to new Stack bookList
+		this.bookList.push()
 	})
+
+
 	$(document).on('mouseup', '#bedside-stack', function(event) {
 		console.log(event.offsetX);
 	})
