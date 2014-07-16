@@ -304,11 +304,16 @@ $(document).on('ready', function() {
 	})
 
 	$(document).on('drop', '#bedside-stack', function(e, ui) {
-		console.log(e);
-		// console.log(draggable);
+		console.log(ui.position);
+		console.log(ui.draggable);
+		console.log(e.offsetX);
+		var setLeft = e.offsetX + 'px';
 		$(this).append(ui.draggable);
 		$(ui.draggable).css({'bottom': 0,
-							'top': '' });
+							'top': '',
+							'left': setLeft });
 	})
-
+	$(document).on('mouseup', '#bedside-stack', function(event) {
+		console.log(event.offsetX);
+	})
 });
