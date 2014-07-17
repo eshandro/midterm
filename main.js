@@ -344,7 +344,7 @@ $(document).on('ready', function() {
 		event.preventDefault();
 	})
 
-// ----------------------- Create a new Book and to DOM and Stacks --------------
+// ----------------------- Create a new Book, add to DOM and Stacks --------------
 	$(document).on('click', '.shelf-it', function() {
 
 		// Creates new Book from form info
@@ -401,19 +401,28 @@ $(document).on('ready', function() {
 		}
 		
 		// Find bottom and left position of this book
+		// and animate appearance on the page
+		var stackLocationTop = idLocation.offset().top;
+		var stackLocationLeft = idLocation.offset().left;
 		var positions = stackBeingUsed.setBookPosition(newBook);
 		var bottomPos = positions[0] + 'px';
 		var leftPos = positions[1] +'px';
-		$(displayBook).css({
-				'bottom': bottomPos,
-				'left': leftPos });
-		
-		$(idLocation).append($(displayBook));
 
+		if (idLocation[0].id === 'bedside-stack') {
+			$(displayBook).css( { 'bottom': stackLocationTop,
+								'left': -stackLocationLeft });
+		}
+		else {
+			$(displayBook).css( { 'bottom': -stackLocationTop,
+								'left': -stackLocationLeft });			
+		}
+		$(idLocation).append($(displayBook));		
+		$(displayBook).animate( {
+				'bottom': bottomPos,
+				'left': leftPos }, 700);
+		
 		// Make new book draggable
 		addDraggable(displayBook);
-
-		 
 	});
 // ---------------------------------------------------------------------------------
 	// Closes and clears add book form
@@ -439,13 +448,14 @@ $(document).on('ready', function() {
 		var droppedBookElem = $(ui.draggable);
 
 		var dropID = '#' + e.currentTarget.id;
-		var setLeft = e.pageX -  ($(dropID).offset().left) - 20;
+		var setLeft = e.pageX -  ($(dropID).offset().left);
+		setLeft -= 20
 
-		$(this).append(droppedBookElem);
 		$(droppedBookElem).css({'bottom': 0,
 							'top': '',
 							'left': setLeft });
-		
+		$(this).append(droppedBookElem);
+		$(droppedBookElem).effect('bounce', 'easeOutBounce');
 		// Remove from old Stack and add dropped book to new Stack bookList
 		// Also updates dropped book to new status and orientation
 		var droppedBookID = +droppedBookElem.attr('data-id');
@@ -461,30 +471,41 @@ $(document).on('ready', function() {
 
 	});
 
-	// Flips book to current Stack's 
+	// Flips book to current Stack's orientation
 	$(document).on('dropover', '.ui-droppable', function(e,ui) {
 		var droppedBookElem = $(ui.draggable);
 		var dropID = e.currentTarget.id;
-		console.log(dropID);
-		console.log(droppedBookElem.hasClass('vertical-book'));
-		console.log(droppedBookElem.hasClass('horizontal-book'));
+		var leftPosition = e.pageX - ($('#' + dropID).offset().left);
+		leftPosition -= 20;
+		var topPosition = e.pageY - ($('#' + dropID).offset().top);
 		if (droppedBookElem.hasClass('horizontal-book')) {
 			if(dropID === 'current-stack' || dropID === 'recent-stack') {
-				console.log('flip');
 				var innerText = droppedBookElem.text();
 				droppedBookElem.removeClass('horizontal-book');
 				droppedBookElem.addClass('vertical-book');
 				droppedBookElem.attr('data-placement', 'top');
+				droppedBookElem.text('');
 				droppedBookElem.append('<p class="vertical-text">' + innerText + '</p>');
-
+				droppedBookElem.css( { 
+					'left': leftPosition,
+					'top': topPosition } );
 			}
 		}
-		if (droppedBookElem.hasClass('vertical-book') && dropID === 'bedside-stack') {
+// Note flip from vertical to horizontal doesn't quite work
+/*		if (droppedBookElem.hasClass('vertical-book') && dropID === 'bedside-stack') {
+			var innerText = droppedBookElem.find('p').text();
+			droppedBookElem.find('p').remove();
 			droppedBookElem.removeClass('vertical-book');
 			droppedBookElem.addClass('horizontal-book');
-			droppedBookElem.removeClass('vertical-text');
-
-		}
+			droppedBookElem.text(innerText);
+			droppedBookElem.attr('data-placement', 'left');
+			console.log(topPosition);
+			// topPosition -= 150;
+			console.log(topPosition)
+			droppedBookElem.css( { 
+					'left': leftPosition,
+					'top': topPosition  } );
+		}*/
 	})
 
 // ---------------------- Sign in and Log out events ----------------------------------
