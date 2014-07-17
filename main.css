@@ -170,7 +170,7 @@ body {
 /* Comments/reviews section */
 .thoughts {
 	/*background-image: url('images/8.jpg');*/
-	background-color: #E9E581;
+	background-color: #b76c33;
 	width: 500px;
 	/*height: 600px;*/
 	border-radius: 20px;
@@ -262,6 +262,7 @@ body {
 }
 
 .stack-label {
+	width: 400px;
 	text-align: center;
 	color: #367f93;
 	margin-top: 8px;
@@ -269,4 +270,8 @@ body {
 
 .add-top-space {
 	margin-top: 3em;
+}
+
+.center-text {
+	text-align: center;
 }
