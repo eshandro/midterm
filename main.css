@@ -182,7 +182,8 @@
 	top: 0;
 	width: 100%;
 	z-index: 100;
-	background-color: rgba(64,64,64,.7);	
+	background-color: rgba(64,64,64,.7);
+	opacity: 0;	
 }
 
 .popup-cont {
@@ -195,7 +196,8 @@
 	box-shadow: 0 3px 10px #222;
 	border-radius: 10px;
 	top: 30%;
-	left: 30%;	
+	left: 30%;
+	opacity: 0;		
 }
 
 .popup-close {

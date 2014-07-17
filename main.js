@@ -289,6 +289,22 @@ recentStack.displayElem(recentStack.createElem());
 // User name storage
 var userNameList = [];
 
+// Create pop up for adding comments
+var createCommentsPopUp = function() {
+	var enterCommentsContainer = $('<div class="comments-container">');
+	var enterCommentsHeader = $('<h2>Enter your comment here</h2>');
+	var enterCommentsTextarea = $('<textarea class="new-comment" placeholder="Comments">');
+	var enterCommentsCancel = $('<button class="button cancel-comment">Cancel</button>');
+	var enterCommentsSave = $('<button class="button save-comment">Save</button>');
+
+	enterCommentsContainer.append(enterCommentsHeader);
+	enterCommentsContainer.append(enterCommentsTextarea);
+	enterCommentsContainer.append(enterCommentsCancel);
+	enterCommentsContainer.append(enterCommentsSave);
+
+	return enterCommentsContainer;
+};
+// --------------------- Document on Ready -----------------------------------
 $(document).on('ready', function() {
 	
 	// Makes Stack areas droppable
@@ -475,12 +491,48 @@ $(document).on('ready', function() {
 		var displayLibrary = createBooksTableElem();
 		$('.popup-cont').append(displayLibrary);
 		$('.popup-cont').append('<span class="popup-close">X');
+		$('.popup-back').animate( {
+			opacity: 1, }, 800);
+		$('.popup-cont').animate( {
+			opacity: 1, }, 1200);
 	});
 
 	// Remove pop-up on click
 	$(document).on('click', '.popup-close', function() {
+		$('.popup-back').animate( {
+			opacity: 0, }, 800);
+		$('.popup-cont').animate( {
+			opacity: 0, }, 1200);
+		setTimeout( function() {
 		$('.popup-cont').remove();
 		$('.popup-back').remove();
+	}, 1400);
 	})
-	
+
+// ---------------------- Comments events ---------------------------------
+
+	$(document).on('click', '.add-comment', function(event) {
+		event.preventDefault();
+		$('body').append('<div class="popup-back">');
+		$('body').append('<div class="popup-cont">');
+		var displayAddComments = createCommentsPopUp();
+		$('.popup-cont').append(displayAddComments);
+		$('.popup-cont').append('<span class="popup-close">X');
+		$('.popup-back').animate( {
+			opacity: 1, }, 800);
+		$('.popup-cont').animate( {
+			opacity: 1, }, 1200);				
+	});
+
+	$(document).on('click', '.cancel-comment', function(event) {
+		event.preventDefault();
+		$('.popup-back').animate( {
+			opacity: 0, }, 800);
+		$('.popup-cont').animate( {
+			opacity: 0, }, 1200);
+		setTimeout( function() {
+		$('.popup-cont').remove();
+		$('.popup-back').remove();
+		}, 1400);		
+	});	
 });
