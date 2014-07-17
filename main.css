@@ -8,8 +8,6 @@
 }
 
 
-
-
 /* Books */
 .book {
 	display: inline-block;
@@ -195,7 +193,7 @@
 	padding: 25px;
 	box-shadow: 0 3px 10px #222;
 	border-radius: 10px;
-	top: 30%;
+	top: 20%;
 	left: 30%;
 	opacity: 0;		
 }
@@ -212,4 +210,31 @@
 
 .popup-close:hover {
 	color: #D9853B;
+}
+
+/* Comments section and pop-up */
+.media-list {
+	margin-top: 20px;
+}
+
+.new-comment {
+	display: block;
+	width: 25em;
+	height: 8em;
+	border-radius: 5px;
+	padding: 8px;
+	margin-bottom: 10px;
+}
+
+.comments-container {
+	margin-left: 40px;
+}
+
+.cancel-comment {
+	width: 4.5em;
+	margin-right: 1.25em;
+}
+
+.save-comment {
+	width: 4em;
 }

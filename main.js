@@ -304,6 +304,18 @@ var createCommentsPopUp = function() {
 
 	return enterCommentsContainer;
 };
+
+// Close pop-ups
+var closePopUp = function() {
+		$('.popup-back').animate( {
+			opacity: 0, }, 800);
+		$('.popup-cont').animate( {
+			opacity: 0, }, 1200);
+		setTimeout( function() {
+		$('.popup-cont').remove();
+		$('.popup-back').remove();
+		}, 1400);	
+}; 
 // --------------------- Document on Ready -----------------------------------
 $(document).on('ready', function() {
 	
@@ -498,16 +510,8 @@ $(document).on('ready', function() {
 	});
 
 	// Remove pop-up on click
-	$(document).on('click', '.popup-close', function() {
-		$('.popup-back').animate( {
-			opacity: 0, }, 800);
-		$('.popup-cont').animate( {
-			opacity: 0, }, 1200);
-		setTimeout( function() {
-		$('.popup-cont').remove();
-		$('.popup-back').remove();
-	}, 1400);
-	})
+	$(document).on('click', '.popup-close', closePopUp );
+
 
 // ---------------------- Comments events ---------------------------------
 
@@ -524,15 +528,25 @@ $(document).on('ready', function() {
 			opacity: 1, }, 1200);				
 	});
 
-	$(document).on('click', '.cancel-comment', function(event) {
+	// Cancel button closes comment pop-up
+	$(document).on('click', '.cancel-comment', closePopUp); 
+
+	// Save comment and add to page and close comment pop-up
+	$(document).on('click', '.save-comment', function(event) {
 		event.preventDefault();
-		$('.popup-back').animate( {
-			opacity: 0, }, 800);
-		$('.popup-cont').animate( {
-			opacity: 0, }, 1200);
-		setTimeout( function() {
-		$('.popup-cont').remove();
-		$('.popup-back').remove();
-		}, 1400);		
-	});	
+		var newComment = $('.new-comment').val();
+		var newCommentItem = $('<li class="media">');
+		var newCommentBody = $('<div class="media-body">');
+		var newCommentTitle = $('<h4 class="media-heading">' + userNameList[0] + ' says:</h4>');
+		var newCommentText = $('<p>' + newComment + '</p>');
+
+		newCommentItem.append(newCommentBody);
+		newCommentBody.append(newCommentTitle);
+		newCommentBody.append(newCommentText);
+
+		$('.media-list').append(newCommentItem);
+
+		closePopUp();
+
+	} )	
 });
