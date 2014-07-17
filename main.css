@@ -40,7 +40,6 @@ body {
 	position: absolute;
 	bottom: 0;
 	left:30px;
-
 }
 
 .vertical-book {
@@ -61,7 +60,7 @@ body {
 	-mox-transform-origin: bottom left;
 	-0-transform-origin: bottom left;
 	transform-origin: bottom left;
-	display: block;
+	/*display: block;*/
 	white-space: nowrap;
 	margin: 0;	
 
@@ -85,15 +84,22 @@ body {
 	background-color: #367f93;
 	}
 
+.add-book-container {
+	text-align: right;
+}
+
 .add-book {
 	height: 2.5em;
 	width: 7.5em;
 	font-size: 1.4em;
+	/*display: block;*/
 }
 
 .add-comment {
 	height: 2em;
 	width: 10em;
+	margin: 10px 0;
+
 
 }
 
@@ -170,11 +176,11 @@ body {
 /* Comments/reviews section */
 .thoughts {
 	/*background-image: url('images/8.jpg');*/
-	background-color: #b76c33;
+	background-color: rgba(88,88,88,.3);
 	width: 500px;
-	/*height: 600px;*/
+	min-height: 300px;
 	border-radius: 20px;
-	padding: 10px 20px;
+	padding: 10px 30px 10px 20px;
 }
 
 
@@ -215,7 +221,7 @@ body {
 	padding: 25px;
 	box-shadow: 0 3px 10px #222;
 	border-radius: 10px;
-	top: 20%;
+	top: 15%;
 	left: 30%;
 	opacity: 0;		
 }
@@ -267,7 +273,9 @@ body {
 	color: #367f93;
 	margin-top: 8px;
 }
-
+.bedside-label {
+	width: 350px;
+}
 .add-top-space {
 	margin-top: 3em;
 }

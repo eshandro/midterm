@@ -34,7 +34,7 @@ var createBooksTableElem = function() {
 	var panelBody = $('<div class="panel-body">');
 	var panelBodyText = '<p>Here are all the books in your library.</p>'
 	var tableBooks = $('<table class="table table-striped">');
-	var tableHeader = $('<tr><th>#</th><th>Title</th><th>Author</th></tr>');
+	var tableHeader = $('<tr><th>#</th><th>Title</th><th>Author</th><th>Read?</th></tr>');
 
 	panel.append(panelHeading);
 	panelHeading.append(panelTitle);
@@ -50,9 +50,20 @@ var createBooksTableElem = function() {
 		var tableRow = $('<tr>');
 
 		tableRow.append($('<td>' + counter + '</td>'));
-
 		tableRow.append($('<td>' + allBooks[i].title + '</td>'));
 		tableRow.append($('<td>' + allBooks[i].author + '</td>'));
+		if (allBooks[i].status === 'current-read') {
+			var tableReadCell = $('<td>Reading</td>')
+			tableReadCell.css('color', '#47a447');
+		}
+		if (allBooks[i].status === 'to-read') {
+			var tableReadCell = $('<td>Reading Soon</td>')
+			tableReadCell.css('color', '#367f93');
+		}
+		if (allBooks[i].status === 'recent-read') {
+			var tableReadCell = $('<td>Read</td>')
+		}
+		tableRow.append(tableReadCell);
 
 		tableBooks.append(tableRow);
 
@@ -98,6 +109,9 @@ Book.prototype.createElem = function() {
 	$(this.elem).css('border-color', color);
 	this.color = color;
 	$(this.elem).attr('data-id', this.id);
+	$(this.elem).attr('data-toggle', 'tooltip');
+	$(this.elem).attr('rel="tooltip"');
+	$(this.elem).attr('title', 'Drag to any stack to update');
 	return this.elem;
 }
 // Finds the Stack from Book status
@@ -170,41 +184,30 @@ var Stack = function () {
 	this.setBookPosition = function(book) {
 		var positions = [];
 		var bottom = 0;
-		var left = 0;
-		var firstBookOrientation = this.bookList[0].orientation;
-		if (firstBookOrientation === 'horizontal') {
+		var left = 45;
+		var currentBookOrientation = book.orientation;
+		// var firstBookOrientation = this.bookList[0].orientation;
+		var totalNumberInStack = this.bookList.length;
+		// Set location if current book is horizontal
+		if (currentBookOrientation === 'horizontal') {
 			left = 125;
-		}
-		else { 
-			left = 95;
-		}
-
-		// Figure bottom amount
-		if (book.orientation === 'vertical') {
-			bottom = 0;
-		}
-		else {
-			for (var i=this.bookList.length-2; i >= 0; i--) {
-				if (this.bookList[i].orientation === 'horizontal') {
-					bottom += 41; 
-				}
+			// Set bottom based on # of books in stack
+			for(var i=0; i < totalNumberInStack-1; i++) {
+				bottom += 41;
 			}
 		}
-		positions.push(bottom);
 		
-		// Figure left amount
-		for (var i=0; i <this.bookList.length-1; i++) {
-			if (this.bookList[i].orientation === 'horizontal' 
-				&& book.orientation !== 'horizontal') {
-				left += 152;
-			}
-			if (this.bookList[i].orientation === 'vertical') {
-				left += 42;
-			}
+		// Set location if current book is vertical
+		else { 
+			bottom = 0;
+			for(var i=0; i < totalNumberInStack-1; i++) {
+				left +=42;
+			}				
 		}
+		positions.push(bottom);		
 		positions.push(left);
 		return positions;
-	}	
+	};	
 }
 
 var BedsideStack = function() {
@@ -267,12 +270,11 @@ var addDraggable = function(item) {
 	$(item).draggable({ revert: 'invalid',
 						cursor: 'move',
 						contain: 'window',
-						snap: 'true'
 						 });
 };
 
 var addDroppable = function(item){
-	$(item).droppable({ hoverClass: "drop-hover" });
+	$(item).droppable();
 }
 
 // Creates and adds Stack, BedsideStack, RecentReadStack, CurrentReadingStack
@@ -316,7 +318,8 @@ var closePopUp = function() {
 		$('.popup-cont').remove();
 		$('.popup-back').remove();
 		}, 1400);	
-}; 
+};
+
 // --------------------- Document on Ready -----------------------------------
 $(document).on('ready', function() {
 	
@@ -385,6 +388,7 @@ $(document).on('ready', function() {
 		if (stackBeingUsed.bookOrientation === 'horizontal') {
 			displayBook.addClass('horizontal-book');
 			newBook.orientation = 'horizontal';
+			displayBook.attr('data-placement', 'left');
 		};
 		// Changes text to vertical text if necessary
 		if ($(displayBook).attr('class') === 'book vertical-book') {
@@ -435,15 +439,15 @@ $(document).on('ready', function() {
 		var droppedBookElem = $(ui.draggable);
 
 		var dropID = '#' + e.currentTarget.id;
-		console.log(e.pageX - $(dropID).offset().left)
 		var setLeft = e.pageX -  ($(dropID).offset().left) - 20;
-		console.log(setLeft);
+
 		$(this).append(droppedBookElem);
 		$(droppedBookElem).css({'bottom': 0,
 							'top': '',
 							'left': setLeft });
 		
 		// Remove from old Stack and add dropped book to new Stack bookList
+		// Also updates dropped book to new status and orientation
 		var droppedBookID = +droppedBookElem.attr('data-id');
 		var droppedBook = findBookByDataID(droppedBookID);
 		var oldStack = droppedBook.getStackFromStatus();
@@ -455,6 +459,32 @@ $(document).on('ready', function() {
 		droppedBook.status = droppedBook.getStatusFromStack(newStack);
 		newStack.addBook(droppedBook);
 
+	});
+
+	// Flips book to current Stack's 
+	$(document).on('dropover', '.ui-droppable', function(e,ui) {
+		var droppedBookElem = $(ui.draggable);
+		var dropID = e.currentTarget.id;
+		console.log(dropID);
+		console.log(droppedBookElem.hasClass('vertical-book'));
+		console.log(droppedBookElem.hasClass('horizontal-book'));
+		if (droppedBookElem.hasClass('horizontal-book')) {
+			if(dropID === 'current-stack' || dropID === 'recent-stack') {
+				console.log('flip');
+				var innerText = droppedBookElem.text();
+				droppedBookElem.removeClass('horizontal-book');
+				droppedBookElem.addClass('vertical-book');
+				droppedBookElem.attr('data-placement', 'top');
+				droppedBookElem.append('<p class="vertical-text">' + innerText + '</p>');
+
+			}
+		}
+		if (droppedBookElem.hasClass('vertical-book') && dropID === 'bedside-stack') {
+			droppedBookElem.removeClass('vertical-book');
+			droppedBookElem.addClass('horizontal-book');
+			droppedBookElem.removeClass('vertical-text');
+
+		}
 	})
 
 // ---------------------- Sign in and Log out events ----------------------------------
@@ -540,10 +570,14 @@ $(document).on('ready', function() {
 		event.preventDefault();
 		var newComment = $('.new-comment').val();
 		var newCommentItem = $('<li class="media">');
+		var newCommentIconHolder = $('<p class="pull-left"></p>');
+		var newCommentIcon = $('<span class="glyphicon glyphicon-book"></span>');
 		var newCommentBody = $('<div class="media-body">');
 		var newCommentTitle = $('<h4 class="media-heading">' + userNameList[0] + ' says:</h4>');
 		var newCommentText = $('<p>' + newComment + '</p>');
 
+		newCommentItem.append(newCommentIconHolder);
+		newCommentIconHolder.append(newCommentIcon);
 		newCommentItem.append(newCommentBody);
 		newCommentBody.append(newCommentTitle);
 		newCommentBody.append(newCommentText);
@@ -551,6 +585,11 @@ $(document).on('ready', function() {
 		$('.media-list').append(newCommentItem);
 
 		closePopUp();
+	});
 
-	} )	
+/*	// Add tooltip pop-up on hover to all books
+	$('[rel="tooltip"]').tooltip({ 
+		container: 'body',});
+*/
+
 });
