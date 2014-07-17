@@ -21,7 +21,7 @@
   <nav class="navbar navbar-inverse .navbar-static-top" role="navigation">
     <div class="container">
 
-    <a class="navbar-brand" href="#">Title of Page</a>
+    <h1 class="navbar-text">My Book Stack</h1>
     <form class="navbar-form navbar-right sign-in-form" role="form">
     <button class="btn btn-primary library-button" type="button">Your Library</button>
         <div class="form-group">
@@ -43,7 +43,7 @@
 
       </div>
   		<div class="shelf-edge"></div>
-
+      <h3 class="stack-label">Recently Read Stack</h3>
   	</div>
 
 
@@ -51,13 +51,14 @@
   	<div class="col-md-5 col-md-offset-2">
   		<div class="shelf current"></div>
   		<div class="shelf-edge"></div>
-  	</div>
+  	   <h3 class="stack-label">Currently Reading Stack</h3>
+    </div>
   
   </div>  	
   </div>
 
   <div class="container my-container">
-  <div class="row">
+  <div class="row add-top-space">
 
    	<div class="col-md-6">
    		<div class="thoughts">
@@ -68,8 +69,8 @@
    		</div>
   	</div>
 
-  	<div class="col-md-4 col-md-offset-1">
-		<button class="button add-book">Add a Book</button>
+  	<div class="col-md-4 col-md-offset-2">
+		<button class="button add-book pull-right">Add a Book</button>
 		
 
 		<form class="form-horizontal add-book-form is-hidden" role="form">
@@ -89,25 +90,25 @@
 			<div class="radio">
 			  <label>
 			    <input type="radio" name="book-status" id="book-status-1" value="to-read" required>
-			    Add a book to your to read stack
+			    Add a book to your to-read stack
 			  </label>
 			</div>
 	
 			<div class="radio">	  
 			    <label>
 					<input type="radio" name="book-status" id="book-status-2" value="current-read">
-					    Add a book to your currently reading stack
+          Add a book to your currently reading stack
 				</label>
 			</div>
 					
 			<div class="radio">
 				<label>
 					<input type="radio" name="book-status" id="book-status-3" value="recent-read">
-					Add a book to your done reading stack
+					Add a book to your recently read stack
 					</label>
 			</div>
+      <button class="button cancel">Cancel</button>
 			<button class="button shelf-it">Shelf it!</button>
-			<button class="button cancel">Cancel</button>
 			</div>
 		</form>  		
   	
@@ -128,7 +129,8 @@
 
 
   <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-  <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js">
+  </script>
   <script src="jquery-ui.min.js"></script>  
   <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
   <script src="main.js"></script>

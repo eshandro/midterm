@@ -433,16 +433,8 @@ $(document).on('ready', function() {
 	$(document).on('drop', '.ui-droppable', function(e, ui) {
 		// Set position of dropped book
 		var droppedBookElem = $(ui.draggable);
-/*		console.log(e.pageX);
-		console.log(e);
-		console.log(ui);
-		console.log(e.currentTarget.id);*/
-/*		console.log(ui.position);
-		console.log(ui.offset);
-		console.log(e.offsetX);
-		console.log(e.offsetY);*/
+
 		var dropID = '#' + e.currentTarget.id;
-		console.log(dropID);
 		console.log(e.pageX - $(dropID).offset().left)
 		var setLeft = e.pageX -  ($(dropID).offset().left) - 20;
 		console.log(setLeft);
