@@ -13,13 +13,14 @@
 /* Books */
 .book {
 	display: inline-block;
-	padding: 4px;
+	padding: 5px;
 	border-width: 5px;
 	border-top-style: ridge;
 	border-left-style: ridge;
 	border-right-style: ridge;
 	border-bottom-style: ridge;
 	border-color: red;
+	overflow: hidden;
 }
 
 .horizontal-book {
@@ -52,6 +53,7 @@
 	transform-origin: bottom left;
 	display: block;
 	white-space: nowrap;
+	margin: 0;	
 
 }
 
@@ -67,10 +69,14 @@
 	border: none;
 }
 
-.add-button {
+.add-book {
 	height: 2.5em;
 	width: 7.5em;
 	font-size: 1.4em;
+}
+
+.add-comment {
+
 }
 
 .shelf-it {
@@ -182,7 +188,7 @@
 .popup-cont {
 	position: fixed;
 	z-index: 102;
-	width: 40%;
+	width: 50%;
 	font-size: 14px;
 	background: #ECECEA;
 	padding: 25px;

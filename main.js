@@ -296,7 +296,7 @@ $(document).on('ready', function() {
 	addDroppable('#current-stack');
 	addDroppable('#recent-stack');
 
-	$('.add-button').on('click', function() {
+	$('.add-book').on('click', function() {
 		// Opens up the form animated from the right
 		$(this).addClass('is-hidden');
 		$('.add-book-form').removeClass('is-hidden');
@@ -328,7 +328,7 @@ $(document).on('ready', function() {
 				opacity: 0
 			}, 1000, function () {
 			$('.add-book-form').addClass('is-hidden');
-			$('.add-button').removeClass('is-hidden');
+			$('.add-book').removeClass('is-hidden');
 			$('.add-book-form').css('left', 0);			
 			// Reset form
 			$('#new-book-title').val('');
@@ -391,7 +391,7 @@ $(document).on('ready', function() {
 			opacity: 0
 		}, 1000, function () {
 			$('.add-book-form').addClass('is-hidden');
-			$('.add-button').removeClass('is-hidden');
+			$('.add-book').removeClass('is-hidden');
 			$('.add-book-form').css('left', 0);				
 			// Clear out entered form info
 			$('#new-book-title').val('');
@@ -428,7 +428,7 @@ $(document).on('ready', function() {
 // ---------------------- Sign in and Log out events ----------------------------------
 
 	$(document).on('click', '.sign-in-button', function(event) {
-		event.preventDefault;
+		event.preventDefault();
 		var userName = $('#user-name').val();
 		if (!userName) {
 			var badLogIn = 'Invalid User Name';
@@ -453,7 +453,7 @@ $(document).on('ready', function() {
 	})
 
 	$(document).on('click', '.log-out-button', function(event) {
-		event.preventDefault;
+		event.preventDefault();
 		$('.welcome').remove();
 		$('#user-name').addClass('form-control');
 		$('#user-name').removeClass('is-none');
@@ -464,8 +464,18 @@ $(document).on('ready', function() {
 		$(this).addClass('sign-in-button');
 		$(this).text("Sign in");
 		userNameList.pop();
-	})
+	});
 // ---------------------- Library popup --------------------------------------
+
+	// Create pop-up lightbox
+	$(document).on('click', '.library-button', function(event) {
+		event.preventDefault();
+		$('body').append('<div class="popup-back">');
+		$('body').append('<div class="popup-cont">');
+		var displayLibrary = createBooksTableElem();
+		$('.popup-cont').append(displayLibrary);
+		$('.popup-cont').append('<span class="popup-close">X');
+	});
 
 	// Remove pop-up on click
 	$(document).on('click', '.popup-close', function() {
