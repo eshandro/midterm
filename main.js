@@ -374,15 +374,18 @@ var sampleBook2 = new Book('Speaking in Code', 'Chris Raine', 'recent-read');
 var sampleBook3 = new Book('Eloquent JS', 'Swedish Guy', 'current-read');
 var sampleBook4 = new Book('The Circle', 'Dave Eggers', 'to-read');
 var sampleBook5 = new Book('The Goldfinch', 'Donna Tartt', 'to-read');
+var sampleBook6 = new Book('Javascript Ninja', 'John Resig', 'current-read');
+var sampleBook7 = new Book('The Twelve', 'Justin Cronin', 'to-read');
+var sampleBook8 = new Book('Learning Web Design', 'Jennifer Robbins', 'recent-read');
 
 // --------------------- Document on Ready -----------------------------------
 // ---------------------------------------------------------------------------
 $(document).on('ready', function() {
-	setPageUp(sampleBook1);	
+/*	setPageUp(sampleBook1);	
 	setPageUp(sampleBook2);	
 	setPageUp(sampleBook3);	
 	setPageUp(sampleBook4);	
-	setPageUp(sampleBook5);	
+	setPageUp(sampleBook5);	*/
 	// Makes Stack areas droppable
 	addDroppable('#bedside-stack');
 	addDroppable('#current-stack');
@@ -623,6 +626,18 @@ $(document).on('ready', function() {
 			var commentsHeaderText = $('.comments-header').text();
 			$('.comments-header').text(userName + ', ' + commentsHeaderText);
 		}
+
+		// Temporary display of books for demo
+		setPageUp(sampleBook1);	
+		setPageUp(sampleBook2);	
+		setPageUp(sampleBook3);	
+		setPageUp(sampleBook4);	
+		setPageUp(sampleBook5);
+		setPageUp(sampleBook6);					
+		setPageUp(sampleBook7);
+		setPageUp(sampleBook8);
+	
+
 	})
 
 	$(document).on('click', '.log-out-button', function(event) {
@@ -638,6 +653,25 @@ $(document).on('ready', function() {
 		$(this).text("Sign in");
 		$('.comments-header').text('Share your thoughts:');
 		userNameList.pop();
+
+		// Removes all books from the DOM
+		$('.book').remove();
+
+		// Remove all books from each Stack's bookList
+		for(var i=bedsideStack.bookList.length-1; i >=0; i--) {
+			bedsideStack.bookList.pop();
+		}
+		for(var i=currentStack.bookList.length-1; i >=0; i--) {
+			currentStack.bookList.pop();
+		}
+		for(var i=recentStack.bookList.length-1; i >=0; i--) {
+			recentStack.bookList.pop();
+		}
+
+		// Remove all books from allBooks
+		for(var i=allBooks.length-1; i >=0; i--) {
+			allBooks.pop();
+		}						
 	});
 // ---------------------- Library popup --------------------------------------
 
