@@ -1,5 +1,5 @@
 var allBooks = [];
-findBookByDataID = function(dataID) {
+var findBookByDataID = function(dataID) {
 	for(var i=0; i<allBooks.length; i++) {
 		if(allBooks[i].id === dataID) {
 			return allBooks[i];
@@ -319,14 +319,67 @@ var closePopUp = function() {
 		$('.popup-back').remove();
 		}, 1400);	
 };
+// Set up page for demo
+var setPageUp = function (book) {
+		var stackBeingUsed = book.getStackFromStatus();
+		var idLocation = book.getHTMLID();
+		stackBeingUsed.addBook(book);
+		var displayBook = book.createElem();
+		if (stackBeingUsed.bookOrientation === 'vertical') {
+			displayBook.addClass('vertical-book');
+			book.orientation = 'vertical';
+		};
+		if (stackBeingUsed.bookOrientation === 'horizontal') {
+			displayBook.addClass('horizontal-book');
+			book.orientation = 'horizontal';
+			displayBook.attr('data-placement', 'left');
+		};
+		if ($(displayBook).attr('class') === 'book vertical-book') {
+			var titlePara = $('<p class="vertical-text">');
+			$(titlePara).text(book.title);
+			$(displayBook).append($(titlePara));
+		}
+		else {
+			$(displayBook).text(book.title); 
+		}
+		var stackLocationTop = idLocation.offset().top;
+		var stackLocationLeft = idLocation.offset().left;
+		var positions = stackBeingUsed.setBookPosition(book);
+		var bottomPos = positions[0] + 'px';
+		var leftPos = positions[1] +'px';
+		if (idLocation[0].id === 'bedside-stack') {
+			$(displayBook).css( { 'bottom': stackLocationTop,
+								'left': -stackLocationLeft });
+		}
+		else {
+			$(displayBook).css( { 'bottom': -stackLocationTop,
+								'left': -stackLocationLeft });			
+		}
+		$(idLocation).append($(displayBook));		
+		$(displayBook).animate( {
+				'bottom': bottomPos,
+				'left': leftPos }, 700);		
+		addDraggable(displayBook);
+};
+var sampleBook1 = new Book('Float Your Hatred', 'C.S. Smith, III', 'recent-read');
+var sampleBook2 = new Book('Speaking in Code', 'Chris Raine', 'recent-read');
+var sampleBook3 = new Book('Eloquent JS', 'Swedish Guy', 'current-read');
+var sampleBook4 = new Book('The Circle', 'Dave Eggers', 'to-read');
+var sampleBook5 = new Book('The Goldfinch', 'Donna Tartt', 'to-read');
 
 // --------------------- Document on Ready -----------------------------------
+// ---------------------------------------------------------------------------
 $(document).on('ready', function() {
-	
+	setPageUp(sampleBook1);	
+	setPageUp(sampleBook2);	
+	setPageUp(sampleBook3);	
+	setPageUp(sampleBook4);	
+	setPageUp(sampleBook5);	
 	// Makes Stack areas droppable
 	addDroppable('#bedside-stack');
 	addDroppable('#current-stack');
 	addDroppable('#recent-stack');
+	addDroppable('.trash-can');
 
 	$('.add-book').on('click', function() {
 		// Opens up the form animated from the right
@@ -443,6 +496,7 @@ $(document).on('ready', function() {
 	});
 
 // --------------------- Drop event ------------------------------------
+	
 	$(document).on('drop', '.ui-droppable', function(e, ui) {
 		// Set position of dropped book
 		var droppedBookElem = $(ui.draggable);
@@ -455,7 +509,7 @@ $(document).on('ready', function() {
 							'top': '',
 							'left': setLeft });
 		$(this).append(droppedBookElem);
-		$(droppedBookElem).effect('bounce', 'easeOutBounce');
+		$(droppedBookElem).effect('bounce', 'fast', 'easeOutBounce');
 		// Remove from old Stack and add dropped book to new Stack bookList
 		// Also updates dropped book to new status and orientation
 		var droppedBookID = +droppedBookElem.attr('data-id');
@@ -508,6 +562,26 @@ $(document).on('ready', function() {
 		}*/
 	})
 
+	$(document).on('drop', '.trash-can', function(e,ui) {
+		var trashedBookElem = $(ui.draggable);
+		
+		var thisDataID = +$(droppedBookElem).attr('data-id');
+		var trashedBook  = findBookByDataID(thisDataID);
+		var trashedBookStatus = trashedBook.status;
+		var trashedBookStack = getStackFromStatus(trashedBookStatus);
+		var indexofBookInStack = trashedBookStack.findIndexOfBookInStack(thisDataID);
+		
+		// Remove book from it's current Stack
+		trashedBookStack.deleteBook(indexofBookInStack);
+
+
+		
+
+		// Remove element from the DOM
+		// droppedBookElem.remove();
+	})
+
+
 // ---------------------- Sign in and Log out events ----------------------------------
 
 	$(document).on('click', '.sign-in-button', function(event) {
@@ -532,6 +606,10 @@ $(document).on('ready', function() {
 
 			$('#user-name').val('');
 			$('#user-password').val('');
+
+			// Add name to comments header
+			var commentsHeaderText = $('.comments-header').text();
+			$('.comments-header').text(userName + ', ' + commentsHeaderText);
 		}
 	})
 
@@ -546,6 +624,7 @@ $(document).on('ready', function() {
 		$(this).removeClass('log-out-button');
 		$(this).addClass('sign-in-button');
 		$(this).text("Sign in");
+		$('.comments-header').text('Share your thoughts:');
 		userNameList.pop();
 	});
 // ---------------------- Library popup --------------------------------------
@@ -596,21 +675,62 @@ $(document).on('ready', function() {
 		var newCommentBody = $('<div class="media-body">');
 		var newCommentTitle = $('<h4 class="media-heading">' + userNameList[0] + ' says:</h4>');
 		var newCommentText = $('<p>' + newComment + '</p>');
+		var respondButton = $('<button class="button respond-button">Respond</button>');
+
 
 		newCommentItem.append(newCommentIconHolder);
 		newCommentIconHolder.append(newCommentIcon);
 		newCommentItem.append(newCommentBody);
 		newCommentBody.append(newCommentTitle);
 		newCommentBody.append(newCommentText);
+		newCommentBody.append(respondButton);
 
 		$('.media-list').append(newCommentItem);
 
 		closePopUp();
 	});
 
-/*	// Add tooltip pop-up on hover to all books
+	$(document).on('click', '.respond-button', function(event) {
+		event.preventDefault();
+		$('body').append('<div class="popup-back">');
+		$('body').append('<div class="popup-cont">');
+		var displayAddComments = createCommentsPopUp();
+		$('.popup-cont').append(displayAddComments);
+		var respondCommentButton = $('.comments-container').find('.save-comment');
+		respondCommentButton.removeClass('save-comment');
+		respondCommentButton.addClass('respond-comment');
+		respondCommentButton.text('Respond');
+		$('.popup-cont').append('<span class="popup-close">X');
+		$('.popup-back').animate( {
+			opacity: 1, }, 800);
+		$('.popup-cont').animate( {
+			opacity: 1, }, 1200);			
+
+		$(this).remove();		
+	})
+
+	$(document).on('click', '.respond-comment', function(event) {
+		var newComment = $('.new-comment').val();
+		var newResponseItem = $('<li class="media response">')
+		var newCommentIconHolder = $('<p class="pull-left"></p>');
+		var newCommentIcon = $('<span class="glyphicon glyphicon-arrow-right"></span>');
+		var newCommentBody = $('<div class="media-body">');
+		var newCommentText = $('<p>' + newComment + '</p>');
+		var respondButton = $('<button class="button respond-button">Respond</button>');
+
+		newResponseItem.append(newCommentIconHolder);
+		newCommentIconHolder.append(newCommentIcon);
+		newResponseItem.append(newCommentBody);
+		newCommentBody.append(newCommentText);
+		newCommentBody.append(respondButton);
+
+		$('.media-list').find('li:last').append(newResponseItem);
+		closePopUp();
+	});
+
+	// Add tooltip pop-up on hover to all books
 	$('[rel="tooltip"]').tooltip({ 
 		container: 'body',});
-*/
+
 
 });

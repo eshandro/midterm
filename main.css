@@ -12,6 +12,13 @@ body {
 	background-color: #ECECEA;
 }
 
+.trash-can {
+	position: relative;
+	bottom: 0;
+}
+.page-title {
+	font-family: 'Special Elite', Helvetica, Verdana, sans-serif;
+}
 .navbar-inverse {
 	background-color: #585858;
 }
@@ -31,6 +38,7 @@ body {
 	border-bottom-style: ridge;
 	border-color: red;
 	overflow: hidden;
+	font-family: 'Vollkorn', serif;	
 }
 
 .horizontal-book {
@@ -258,6 +266,11 @@ body {
 	margin-left: 40px;
 }
 
+.comments-header {
+	font-family: 'Special Elite', Helvetica, Verdana, sans-serif;
+
+}
+
 .cancel-comment {
 	width: 4.5em;
 	margin-right: 1.25em;
@@ -272,6 +285,8 @@ body {
 	text-align: center;
 	color: #367f93;
 	margin-top: 8px;
+	font-family: 'Special Elite', Helvetica, Verdana, sans-serif;
+
 }
 .bedside-label {
 	width: 350px;
