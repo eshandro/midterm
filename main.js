@@ -375,7 +375,7 @@ var sampleBook3 = new Book('Eloquent JS', 'Swedish Guy', 'current-read');
 var sampleBook4 = new Book('The Circle', 'Dave Eggers', 'to-read');
 var sampleBook5 = new Book('The Goldfinch', 'Donna Tartt', 'to-read');
 var sampleBook6 = new Book('Javascript Ninja', 'John Resig', 'current-read');
-var sampleBook7 = new Book('The Twelve', 'Justin Cronin', 'to-read');
+var sampleBook7 = new Book('The Twelve', 'Justin Cronin', 'recent-read');
 var sampleBook8 = new Book('Learning Web Design', 'Jennifer Robbins', 'recent-read');
 
 // --------------------- Document on Ready -----------------------------------
@@ -395,7 +395,7 @@ $(document).on('ready', function() {
 	$('.add-book').on('click', function() {
 		// Opens up the form animated from the right
 		$(this).addClass('is-hidden');
-		$('.add-book-form').removeClass('is-hidden');
+		$('.add-book-form').removeClass('is-none');
 		$('.add-book-form').css('left', 134 + '%');
 		$('.add-book-form').animate( {
 			left: 0,
@@ -423,7 +423,7 @@ $(document).on('ready', function() {
 				left: 134 + '%',
 				opacity: 0
 			}, 1000, function () {
-			$('.add-book-form').addClass('is-hidden');
+			$('.add-book-form').addClass('is-none');
 			$('.add-book').removeClass('is-hidden');
 			$('.add-book-form').css('left', 0);			
 			// Reset form
@@ -496,7 +496,7 @@ $(document).on('ready', function() {
 			left: 134 + '%',
 			opacity: 0
 		}, 1000, function () {
-			$('.add-book-form').addClass('is-hidden');
+			$('.add-book-form').addClass('is-none');
 			$('.add-book').removeClass('is-hidden');
 			$('.add-book-form').css('left', 0);				
 			// Clear out entered form info
