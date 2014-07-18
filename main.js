@@ -7,6 +7,14 @@ var findBookByDataID = function(dataID) {
 	}
 };
 
+var findIndexofBookinallBooks = function(id) {
+	for (var i=0; i < allBooks.length; i++) {
+		if (allBooks[i].id === id) {
+			return i;
+		}
+	}
+};
+
 var sortAllBooksByStatus = function(list) {
 	for(var i=0; i<allBooks.length; i++) {
 		if(allBooks[i].status === 'current-read') {
@@ -213,7 +221,7 @@ var Stack = function () {
 var BedsideStack = function() {
 	this.bookOrientation = 'horizontal';
 	this.createElem = function() {
-		this.elem = $('<div id="bedside-stack">');
+		this.elem = $('<div id="bedside-stack" class="stack">');
 		return this.elem;
 	}
 	this.displayElem = function() {
@@ -227,7 +235,7 @@ BedsideStack.prototype.constructor = BedsideStack;
 var CurrentReadingStack = function() {
 	this.bookOrientation = 'vertical';
 	this.createElem = function() {
-		this.elem = $('<div id="current-stack">');
+		this.elem = $('<div id="current-stack" class="stack">');
 		return this.elem;
 	}
 	this.displayElem = function() {
@@ -241,7 +249,7 @@ CurrentReadingStack.prototype.constructor = CurrentReadingStack;
 var RecentReadStack = function() {
 	this.bookOrientation = 'vertical'
 	this.createElem = function() {
-		this.elem = $('<div id="recent-stack">');
+		this.elem = $('<div id="recent-stack" class="stack">');
 		return this.elem;
 	}
 	this.displayElem = function() {
@@ -497,7 +505,7 @@ $(document).on('ready', function() {
 
 // --------------------- Drop event ------------------------------------
 	
-	$(document).on('drop', '.ui-droppable', function(e, ui) {
+	$(document).on('drop', '.stack', function(e, ui) {
 		// Set position of dropped book
 		var droppedBookElem = $(ui.draggable);
 
@@ -526,7 +534,7 @@ $(document).on('ready', function() {
 	});
 
 	// Flips book to current Stack's orientation
-	$(document).on('dropover', '.ui-droppable', function(e,ui) {
+	$(document).on('dropover', '.stack', function(e,ui) {
 		var droppedBookElem = $(ui.draggable);
 		var dropID = e.currentTarget.id;
 		var leftPosition = e.pageX - ($('#' + dropID).offset().left);
@@ -565,20 +573,24 @@ $(document).on('ready', function() {
 	$(document).on('drop', '.trash-can', function(e,ui) {
 		var trashedBookElem = $(ui.draggable);
 		
-		var thisDataID = +$(droppedBookElem).attr('data-id');
+		var thisDataID = +$(trashedBookElem).attr('data-id');
 		var trashedBook  = findBookByDataID(thisDataID);
 		var trashedBookStatus = trashedBook.status;
-		var trashedBookStack = getStackFromStatus(trashedBookStatus);
+		var trashedBookStack = trashedBook.getStackFromStatus();
 		var indexofBookInStack = trashedBookStack.findIndexOfBookInStack(thisDataID);
 		
 		// Remove book from it's current Stack
 		trashedBookStack.deleteBook(indexofBookInStack);
 
-
+		// Remove book from allBooks
+		var indexofBookInallBooks = findIndexofBookinallBooks(thisDataID);
+		allBooks.splice(indexofBookInallBooks,1);
 		
 
 		// Remove element from the DOM
-		// droppedBookElem.remove();
+		trashedBookElem.effect('explode', 'slow', function() {
+		trashedBookElem.remove(); 
+		});
 	})
 
 

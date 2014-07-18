@@ -14,7 +14,7 @@ body {
 
 .trash-can {
 	position: relative;
-	bottom: 0;
+	bottom: 128px;
 }
 .page-title {
 	font-family: 'Special Elite', Helvetica, Verdana, sans-serif;
